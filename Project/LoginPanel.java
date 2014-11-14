@@ -44,8 +44,7 @@ public class LoginPanel extends javax.swing.JPanel
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents()
-    {
+    private void initComponents() {
 
         UsernameField = new javax.swing.JTextField();
         PasswordField = new javax.swing.JTextField();
@@ -53,30 +52,34 @@ public class LoginPanel extends javax.swing.JPanel
         LoginButton = new javax.swing.JButton();
 
         UsernameField.setText("Username");
-        UsernameField.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        UsernameField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 UsernameFieldActionPerformed(evt);
+            }
+        });
+        UsernameField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                UsernameFieldFocusGained(evt);
             }
         });
 
         PasswordField.setText("Password");
-        PasswordField.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        PasswordField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 PasswordFieldActionPerformed(evt);
+            }
+        });
+        PasswordField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                PasswordFieldFocusGained(evt);
             }
         });
 
         CreateAccButton.setText("Create Account");
 
         LoginButton.setText("Login");
-        LoginButton.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mouseClicked(java.awt.event.MouseEvent evt)
-            {
+        LoginButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
                 LoginButtonMouseClicked(evt);
             }
         });
@@ -138,12 +141,47 @@ public class LoginPanel extends javax.swing.JPanel
         // this name and adding that object to MainPanel has allowed us 
         // to access and show that panel from outside of the class as long
         //  as we pass in MainPanel
-        layout.show(MainPanel, "AccList");
         // This is an example of how we will access our HashTable from our 
         // other tables. Since it is declared static in GUI.java, we have access
         // to it everywhere.
-        GUI.MasterTable.findUserAccount(UsernameField.getText());
+        UserAccount toLogin = GUI.MasterTable.findUserAccount(UsernameField.getText());
+        //The username was not found
+        if (toLogin == null)
+        {
+            //Show a popup, return to the login page with both fields erased.
+            JOptionPane.showMessageDialog(null, "The username was not found.");
+            PasswordField.setText("");
+            UsernameField.setText("");
+        }
+        
+        else 
+        {
+            //The username is valid, and the password is valid
+            if (toLogin.getPassword().equals(PasswordField.getText()))
+            {
+                //Bring the user to the account list panel
+                layout.show(MainPanel, "AccList");
+            }
+            
+            //The username is valid, but the password is not valid
+            else
+            {
+                //Show a popup, return to the login page with password field erased.
+                JOptionPane.showMessageDialog(null, "Incorrect password.");
+                PasswordField.setText("");
+            }
+        }
     }//GEN-LAST:event_LoginButtonMouseClicked
+
+    private void UsernameFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_UsernameFieldFocusGained
+        // TODO add your handling code here:
+        UsernameField.setText("");
+    }//GEN-LAST:event_UsernameFieldFocusGained
+
+    private void PasswordFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_PasswordFieldFocusGained
+        // TODO add your handling code here:
+        PasswordField.setText("");
+    }//GEN-LAST:event_PasswordFieldFocusGained
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
