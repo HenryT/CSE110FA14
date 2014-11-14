@@ -13,6 +13,7 @@ Description:    This class will define what our Login Page will look like and
        
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class LoginPanel extends javax.swing.JPanel
 {
@@ -21,6 +22,16 @@ public class LoginPanel extends javax.swing.JPanel
     // YOU DECLARE A PRIVATE VARIABLE THAT WILL STORE THE MAIN PANEL FROM GUI 
     private JPanel MainPanel;
     
+    //keeps track of which accounts have been attempted to be logged in. Maximum of 3 login attempts each.
+    ArrayList<String> userNamesAttempted = new ArrayList<String>();
+
+    //keeps track of number of login attempts per user name.
+    //These two arraylists will always be the same size, so the index in each refer to the same account.
+    ArrayList<Integer> loginAttempts = new ArrayList<Integer>();
+    
+    //Maximum number of login attempts per account
+    int maxLoginAttempts = 3;
+
     public LoginPanel()
     {
         initComponents();
@@ -149,7 +160,10 @@ public class LoginPanel extends javax.swing.JPanel
         // This is an example of how we will access our HashTable from our 
         // other tables. Since it is declared static in GUI.java, we have access
         // to it everywhere.
+        
+        //The account that is trying to log in
         UserAccount toLogin = GUI.MasterTable.findUserAccount(UsernameField.getText());
+        
         //The username was not found
         if (toLogin == null)
         {
@@ -157,6 +171,46 @@ public class LoginPanel extends javax.swing.JPanel
             JOptionPane.showMessageDialog(null, "The username was not found.");
             PasswordField.setText("");
             UsernameField.setText("");
+            return;
+        }
+        
+        //Here we do all the stuff to check taht the user doesn't attempt to login to the same
+        //account too many times.
+        String username = UsernameField.getText();
+        boolean addUsername = true;
+        int index = 0;
+        
+        //First we find out if they are inputting a username that they've already tried
+        for (int i = 0; i < userNamesAttempted.size(); i++)
+        {
+            if (userNamesAttempted.get(i).equals(username))
+            {
+                addUsername = false;
+                index = i;
+            }
+        }
+        
+        if (addUsername)
+        {
+            //If we are here, then the user has never attempted to login to this account yet.
+            //So, we add it to the array lists
+            userNamesAttempted.add(username);
+            loginAttempts.add(0);
+            index = userNamesAttempted.size() - 1;
+        }
+        else 
+        {
+            //If we are here, the user has attempted to login here before. 
+            //Increment the login attempts by 1.
+            loginAttempts.set(index, loginAttempts.get(index) + 1);
+        }
+        
+        //We check that the user hasn't tried to log in too many times
+        if (loginAttempts.get(index) >= maxLoginAttempts)
+        {
+            JOptionPane.showMessageDialog(null, "Too many login attempts. Only 3 are allowed.");
+            UsernameField.setText("");
+            PasswordField.setText("");
         }
         
         else 
