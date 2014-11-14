@@ -76,6 +76,11 @@ public class LoginPanel extends javax.swing.JPanel
         });
 
         CreateAccButton.setText("Create Account");
+        CreateAccButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                CreateAccButtonMouseClicked(evt);
+            }
+        });
 
         LoginButton.setText("Login");
         LoginButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -182,6 +187,67 @@ public class LoginPanel extends javax.swing.JPanel
         // TODO add your handling code here:
         PasswordField.setText("");
     }//GEN-LAST:event_PasswordFieldFocusGained
+
+    private void CreateAccButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CreateAccButtonMouseClicked
+        // TODO add your handling code here:
+        int requiredPasswordLength = 5;
+        int requiredUsernameLength = 5;
+        
+        //Used to make sure user inputs valid data and to tell them what they did wrong if they didn't
+        String errorMessage = "";
+        boolean validInput = true;
+        
+        //stores password/username they are trying to use
+        String username = UsernameField.getText();
+        String password = PasswordField.getText();
+        
+        //Check for valid username and password inputs
+        if (password.length() < requiredPasswordLength)
+        {
+            errorMessage += ("Password must be a minimum of " + requiredPasswordLength + " characters\n");
+            PasswordField.setText("");
+            validInput = false;
+        }
+        
+        if (username.length() < requiredUsernameLength)
+        {
+            errorMessage += ("Username must be a minimum of " + requiredUsernameLength + " characters.\n");
+            UsernameField.setText("");
+            validInput = false;
+        }
+        
+        //If we have reached this, the password and username are valid
+        if (validInput)
+        {
+            //First check if the user already exists
+            if (GUI.MasterTable.findUserAccount(username) != null)
+            {
+                //duplicate user
+                JOptionPane.showMessageDialog(null, "This user already exists.");
+                UsernameField.setText("");
+            }
+            
+            //we are all good if we go into here
+            else
+            {
+                //add the user to the master table and then set his password to what he specified
+                GUI.MasterTable.insertUserAccount(username);
+                UserAccount user = GUI.MasterTable.findUserAccount(username);
+                user.setPassword(password);
+                JOptionPane.showMessageDialog(null, "Account name: " + username + " successfully created.");
+                UsernameField.setText("");
+                PasswordField.setText("");
+            }
+        }
+        
+        //If we are here, the username and/or password were invalid in some way. Print error message.
+        else 
+        {
+            JOptionPane.showMessageDialog(null, errorMessage);
+            UsernameField.setText("");
+            PasswordField.setText("");
+        }
+    }//GEN-LAST:event_CreateAccButtonMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
